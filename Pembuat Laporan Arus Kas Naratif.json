@@ -1,0 +1,392 @@
+{
+  "name": "testing",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## ✅ V4 — Fix Binary PDF Monk\n\n**Root cause error sebelumnya:**\nCode node \"Siapkan Data Email\" tidak bisa meneruskan binary dari `$input.binary` ke output.\n\n**Fix yang diterapkan:**\n- ❌ Hapus node \"Siapkan Data Email\"\n- ✅ PDF Monk → langsung ke Gmail\n- ✅ Gmail ambil JSON dari `$('Format HTML untuk PDF').first().json`\n- ✅ Binary `data` dari PDF Monk otomatis tersedia\n- ✅ `attachmentsBinary: [{ property: \"data\" }]`",
+        "height": 340,
+        "width": 440,
+        "color": 2
+      },
+      "id": "8dd8f1e4-f60b-4f7c-b7ca-0da655da2952",
+      "name": "Sticky Note 36f17afc",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        784
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🔧 Penting: Kenapa Langsung ke Gmail?\n\nPDF Monk menghasilkan binary property `data` secara native di n8n. Binary ini HANYA bisa diakses oleh node yang **langsung** menerima outputnya.\n\nJika melewati Code node, binary akan hilang karena Code node tidak bisa forward binary dari input ke output.\n\n**Alur yang benar:**\nFormat HTML → PDF Monk → Gmail ✅",
+        "height": 280,
+        "width": 380,
+        "color": 3
+      },
+      "id": "c25c51cd-1684-40f5-9df7-dc157eb4debf",
+      "name": "Sticky Note b83915ff",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        208,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months",
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "7bd79359-49d8-49c9-b33e-906c543821b5",
+      "name": "Jadwal Bulanan",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        128,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1I1QZHxUs5NsGaBbEngdswbAfSce8GCbVvj3zWdUWXqc/edit?usp=drivesdk",
+          "__regex": "https:\\/\\/(?:drive|docs)\\.google\\.com(?:\\/.*|)\\/d\\/([0-9a-zA-Z\\-_]+)(?:\\/.*|)"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1I1QZHxUs5NsGaBbEngdswbAfSce8GCbVvj3zWdUWXqc/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "47984627-95ab-4f79-9f64-2985ffa33087",
+      "name": "Get row(s) in sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        480
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "353DkjOtalLlel4w",
+          "name": "Google Sheets Miftah NF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst rows = $input.all().map(i => i.json);\nif (rows.length === 0) throw new Error('Tidak ada data cashflow di Google Sheets.');\n\nconst pemasukan = rows.filter(r => r.Jenis === 'Pemasukan');\nconst pengeluaran = rows.filter(r => r.Jenis === 'Pengeluaran');\nconst toNum = (v) => parseFloat(String(v).replace(/[^0-9.-]/g, '')) || 0;\n\nconst totalPemasukan = pemasukan.reduce((s, r) => s + toNum(r.Nominal), 0);\nconst totalPengeluaran = pengeluaran.reduce((s, r) => s + toNum(r.Nominal), 0);\nconst cashBalance = totalPemasukan - totalPengeluaran;\nconst cashflowRatio = totalPemasukan > 0 ? ((cashBalance / totalPemasukan) * 100).toFixed(1) : '0';\nconst statusCashflow = cashBalance >= 0 ? 'POSITIF' : 'NEGATIF';\n\nconst pengeluaranPerDivisi = {};\npengeluaran.forEach(r => { pengeluaranPerDivisi[r.Divisi] = (pengeluaranPerDivisi[r.Divisi] || 0) + toNum(r.Nominal); });\nconst rankingDivisi = Object.entries(pengeluaranPerDivisi).sort((a, b) => b[1] - a[1]).map(([d, t]) => ({ divisi: d, total: t }));\n\nconst pemasukanPerDivisi = {};\npemasukan.forEach(r => { pemasukanPerDivisi[r.Divisi] = (pemasukanPerDivisi[r.Divisi] || 0) + toNum(r.Nominal); });\n\nconst formatRp = (n) => 'Rp ' + Math.abs(n).toLocaleString('id-ID');\nconst semuaDivisi = [...new Set(rows.map(r => r.Divisi))].sort();\n\nlet tabelDivisi = '| Divisi | Pemasukan | Pengeluaran | Net |\\n|--------|-----------|-------------|-----|\\n';\nsemuaDivisi.forEach(div => {\n  const masuk = pemasukanPerDivisi[div] || 0;\n  const keluar = pengeluaranPerDivisi[div] || 0;\n  tabelDivisi += '| ' + div + ' | ' + formatRp(masuk) + ' | ' + formatRp(keluar) + ' | ' + formatRp(masuk - keluar) + ' |\\n';\n});\n\nlet tabelTransaksi = '| Tanggal | Divisi | Jenis | Nominal | Keterangan |\\n|---------|--------|-------|---------|------------|\\n';\nrows.forEach(r => { tabelTransaksi += '| ' + r.Tanggal + ' | ' + r.Divisi + ' | ' + r.Jenis + ' | ' + formatRp(toNum(r.Nominal)) + ' | ' + (r.Keterangan || '-') + ' |\\n'; });\n\nconst tanggalList = rows.map(r => new Date(r.Tanggal)).filter(d => !isNaN(d.getTime()));\nconst bulanLaporan = tanggalList.length > 0 ? new Date(Math.max(...tanggalList)).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }) : 'Terkini';\nconst tanggalGenerate = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });\n\nreturn [{ json: {\n  bulanLaporan, tanggalGenerate,\n  totalPemasukan, totalPengeluaran, cashBalance, cashflowRatio, statusCashflow,\n  jumlahTransaksi: rows.length, jumlahDivisi: semuaDivisi.length,\n  divisiTerboros: rankingDivisi[0]?.divisi || 'N/A',\n  formatTotalPemasukan: formatRp(totalPemasukan),\n  formatTotalPengeluaran: formatRp(totalPengeluaran),\n  formatCashBalance: formatRp(Math.abs(cashBalance)),\n  formatNominalTerboros: formatRp(rankingDivisi[0]?.total || 0),\n  tabelDivisi, tabelTransaksi,\n  namaFilePDF: 'Laporan_Cashflow_' + bulanLaporan.replace(/ /g, '_') + '.pdf'\n}}];\n      "
+      },
+      "id": "cd3e9ad1-b123-4183-9ffc-8c8783273586",
+      "name": "Proses & Hitung Statistik Keuangan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ \"Anda adalah Chief Financial Officer (CFO) senior PT Nusantara Maju dengan pengalaman 20+ tahun. Analisis data arus kas berikut dan buat laporan naratif profesional dalam Bahasa Indonesia formal.\\n\\nPERIODE: \" + $json.bulanLaporan + \"\\nTOTAL PEMASUKAN: \" + $json.formatTotalPemasukan + \"\\nTOTAL PENGELUARAN: \" + $json.formatTotalPengeluaran + \"\\nCASH BALANCE: \" + $json.formatCashBalance + \" (\" + $json.statusCashflow + \")\\nRASIO CASHFLOW: \" + $json.cashflowRatio + \"%\\nJUMLAH TRANSAKSI: \" + $json.jumlahTransaksi + \"\\nDIVISI PALING BOROS: \" + $json.divisiTerboros + \" (\" + $json.formatNominalTerboros + \")\\n\\nDATA PER DIVISI:\\n\" + $json.tabelDivisi + \"\\nDETAIL TRANSAKSI:\\n\" + $json.tabelTransaksi + \"\\n\\nBuat laporan naratif dengan struktur berikut:\\n\\n## 1. RINGKASAN KONDISI KEUANGAN\\n(Gambaran umum kondisi keuangan bulan ini, mudah dipahami non-keuangan)\\n\\n## 2. ANALISIS DIVISI PALING BOROS\\n(Evaluasi divisi dengan pengeluaran terbesar, apakah wajar atau perlu ditinjau)\\n\\n## 3. TREN PEMASUKAN & PENGELUARAN\\n(Pola cashflow dan hal yang perlu diperhatikan)\\n\\n## 4. RISIKO CASHFLOW\\n(Identifikasi potensi risiko keuangan yang perlu diwaspadai)\\n\\n## 5. REKOMENDASI EFISIENSI BIAYA\\n1. [Rekomendasi pertama konkret dan actionable]\\n2. [Rekomendasi kedua konkret dan actionable]\\n3. [Rekomendasi ketiga konkret dan actionable]\\n\\nGunakan bahasa Indonesia formal, hindari jargon keuangan rumit.\" }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Anda adalah CFO profesional yang membuat laporan keuangan naratif dalam Bahasa Indonesia. Laporan harus informatif, terstruktur, dan mudah dipahami oleh direksi yang tidak berlatar belakang keuangan. Selalu gunakan format Markdown dengan heading yang jelas."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "39899e0b-bb06-4546-b3c4-0775f8b862f8",
+      "name": "Analisis CFO - Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        800,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {
+          "maxTokensToSample": 2048,
+          "temperature": 0.7
+        }
+      },
+      "id": "0b3aa975-5e23-4dcd-a4cf-16e427de7bfa",
+      "name": "Groq Llama 3.3 70B",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        864,
+        704
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "l7PwE7F89tRbA6Mh",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst laporanNaratif = $input.first().json.output || '';\nconst dk = $('Proses & Hitung Statistik Keuangan').first().json;\n\nconst mdToHtml = (md) => {\n  return md\n    .replace(/^## (.+)$/gm, '<h2 style=\"color:#1a3a5c;border-bottom:2px solid #e8edf2;padding-bottom:8px;margin-top:28px\">$1</h2>')\n    .replace(/^# (.+)$/gm, '<h1 style=\"color:#1a3a5c\">$1</h1>')\n    .replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>')\n    .replace(/\\*(.+?)\\*/g, '<em>$1</em>')\n    .replace(/^(\\d+)\\. (.+)$/gm, '<li style=\"margin-bottom:8px\">$2</li>')\n    .replace(/^- (.+)$/gm, '<li style=\"margin-bottom:6px\">$1</li>')\n    .replace(/(<li[^>]*>.*?<\\/li>\\n?)+/gs, m => '<ul style=\"padding-left:24px;margin:12px 0\">' + m + '</ul>')\n    .split('\\n\\n')\n    .map(p => p.startsWith('<') ? p : '<p style=\"margin:10px 0;line-height:1.7\">' + p + '</p>')\n    .join('\\n');\n};\n\nconst sc = dk.statusCashflow === 'POSITIF' ? '#16a34a' : '#dc2626';\nconst sb = dk.statusCashflow === 'POSITIF' ? '#dcfce7' : '#fee2e2';\n\nconst html = `<!DOCTYPE html>\n<html><head><meta charset=\"UTF-8\"><style>\n*{box-sizing:border-box;margin:0;padding:0}\nbody{font-family:Arial,Helvetica,sans-serif;color:#1f2937;background:#fff}\n.wrap{max-width:800px;margin:0 auto;padding:32px}\n.hdr{background:linear-gradient(135deg,#1a3a5c 0%,#2c5282 100%);color:white;padding:32px;border-radius:10px;margin-bottom:28px}\n.hdr h1{font-size:22px;font-weight:bold;margin-bottom:6px}\n.hdr p{font-size:13px;opacity:.85}\n.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}\n.metric{background:#f8fafc;border-radius:8px;padding:16px;border-top:3px solid #1a3a5c}\n.metric .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6b7280;margin-bottom:6px}\n.metric .val{font-size:17px;font-weight:bold;color:#1a3a5c}\n.metric.pos .val{color:#16a34a}\n.metric.neg .val{color:#dc2626}\n.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;background:${sb};color:${sc};margin-top:4px}\n.footer{margin-top:36px;padding-top:18px;border-top:1px solid #e5e7eb;text-align:center;font-size:11px;color:#9ca3af}\n</style></head>\n<body><div class=\"wrap\">\n<div class=\"hdr\">\n  <h1>📊 LAPORAN ARUS KAS NARATIF — ${dk.bulanLaporan.toUpperCase()}</h1>\n  <p>PT Nusantara Maju &nbsp;|&nbsp; ${dk.tanggalGenerate} &nbsp;|&nbsp; Sistem CFO AI Otomasi</p>\n</div>\n<div class=\"metrics\">\n  <div class=\"metric pos\"><div class=\"lbl\">Total Pemasukan</div><div class=\"val\">${dk.formatTotalPemasukan}</div></div>\n  <div class=\"metric neg\"><div class=\"lbl\">Total Pengeluaran</div><div class=\"val\">${dk.formatTotalPengeluaran}</div></div>\n  <div class=\"metric\"><div class=\"lbl\">Cash Balance</div><div class=\"val\">${dk.formatCashBalance}</div><div class=\"badge\">${dk.statusCashflow}</div></div>\n  <div class=\"metric\"><div class=\"lbl\">Rasio Cashflow</div><div class=\"val\">${dk.cashflowRatio}%</div></div>\n</div>\n<div class=\"report\">${mdToHtml(laporanNaratif)}</div>\n<div class=\"footer\">\n  <p>Dibuat otomatis oleh Sistem CFO AI n8n &mdash; ${dk.tanggalGenerate}</p>\n  <p style=\"margin-top:4px\">Konfidensial — Hanya untuk internal manajemen PT Nusantara Maju</p>\n</div>\n</div></body></html>`;\n\nreturn [{\n  json: {\n    htmlContent: html,\n    laporanNaratif,\n    bulanLaporan: dk.bulanLaporan,\n    statusCashflow: dk.statusCashflow,\n    formatTotalPemasukan: dk.formatTotalPemasukan,\n    formatTotalPengeluaran: dk.formatTotalPengeluaran,\n    formatCashBalance: dk.formatCashBalance,\n    cashflowRatio: dk.cashflowRatio,\n    divisiTerboros: dk.divisiTerboros,\n    tanggalGenerate: dk.tanggalGenerate,\n    namaFilePDF: dk.namaFilePDF\n  }\n}];\n      "
+      },
+      "id": "26e79354-6c99-4853-add2-1803a5e915bb",
+      "name": "Format HTML untuk PDF",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "html_content": "={{ $json.htmlContent }}"
+      },
+      "id": "78b210c4-6d7e-439f-b47e-2d1c58e44a85",
+      "name": "Convert HTML to PDF",
+      "type": "n8n-nodes-htmlcsstopdf.htmlcsstopdf",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        480
+      ],
+      "credentials": {
+        "htmlcsstopdfApi": {
+          "id": "LKV3GxLcxfscetXq",
+          "name": "HTML to PDF account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "mift23047ti@student.nurulfikri.ac.id",
+        "subject": "={{ \"[CFO REPORT] Laporan Arus Kas \" + $(\"Format HTML untuk PDF\").first().json.bulanLaporan + \" | \" + $(\"Format HTML untuk PDF\").first().json.statusCashflow + \" | Net: \" + $(\"Format HTML untuk PDF\").first().json.formatCashBalance }}",
+        "message": "={{ \"<div style='font-family:Arial,sans-serif;max-width:680px;margin:0 auto;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden'>\" + \"<div style='background:linear-gradient(135deg,#1a3a5c,#2c5282);color:white;padding:28px'>\" + \"<h2 style='margin:0 0 6px'>📊 Laporan Arus Kas — \" + $(\"Format HTML untuk PDF\").first().json.bulanLaporan + \"</h2>\" + \"<p style='margin:0;font-size:13px;opacity:.85'>Digenerate otomatis oleh Sistem CFO AI | \" + $(\"Format HTML untuk PDF\").first().json.tanggalGenerate + \"</p></div>\" + \"<div style='display:flex;border-bottom:1px solid #e5e7eb'>\" + \"<div style='flex:1;padding:18px;border-right:1px solid #e5e7eb;border-bottom:3px solid #16a34a'><div style='font-size:10px;color:#6b7280;text-transform:uppercase'>Total Pemasukan</div><div style='font-size:18px;font-weight:bold;color:#16a34a;margin-top:4px'>\" + $(\"Format HTML untuk PDF\").first().json.formatTotalPemasukan + \"</div></div>\" + \"<div style='flex:1;padding:18px;border-right:1px solid #e5e7eb;border-bottom:3px solid #dc2626'><div style='font-size:10px;color:#6b7280;text-transform:uppercase'>Total Pengeluaran</div><div style='font-size:18px;font-weight:bold;color:#dc2626;margin-top:4px'>\" + $(\"Format HTML untuk PDF\").first().json.formatTotalPengeluaran + \"</div></div>\" + \"<div style='flex:1;padding:18px;border-right:1px solid #e5e7eb;border-bottom:3px solid #1a3a5c'><div style='font-size:10px;color:#6b7280;text-transform:uppercase'>Cash Balance</div><div style='font-size:18px;font-weight:bold;color:#1a3a5c;margin-top:4px'>\" + $(\"Format HTML untuk PDF\").first().json.formatCashBalance + \"</div></div>\" + \"<div style='flex:1;padding:18px;border-bottom:3px solid #d97706'><div style='font-size:10px;color:#6b7280;text-transform:uppercase'>Rasio</div><div style='font-size:18px;font-weight:bold;color:#d97706;margin-top:4px'>\" + $(\"Format HTML untuk PDF\").first().json.cashflowRatio + \"%</div></div></div>\" + \"<div style='padding:24px'>\" + \"<p style='margin:0 0 14px'>Yth. Tim Manajemen PT Nusantara Maju,</p>\" + \"<p style='margin:0 0 14px'>Terlampir <strong>Laporan Arus Kas Naratif</strong> periode <strong>\" + $(\"Format HTML untuk PDF\").first().json.bulanLaporan + \"</strong> hasil analisis AI CFO.</p>\" + \"<div style='background:#fef9c3;border-left:4px solid #d97706;padding:14px;border-radius:4px;margin-bottom:14px'><strong>⚠️ Divisi paling boros:</strong> <strong>\" + $(\"Format HTML untuk PDF\").first().json.divisiTerboros + \"</strong> — lihat rekomendasi di lampiran PDF.</div>\" + \"<p style='margin:0'>Laporan mencakup: ringkasan keuangan, analisis divisi, tren cashflow, risiko, dan 3 rekomendasi strategis.</p></div>\" + \"<div style='background:#f9fafb;padding:14px;text-align:center;font-size:11px;color:#9ca3af;border-top:1px solid #e5e7eb'>Email otomatis Sistem CFO AI n8n &bull; Konfidensial</div></div>\" }}",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "id": "194df026-9ce2-49e7-a982-713be0cadaa4",
+      "name": "Kirim Email + PDF ke Stakeholder",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1776,
+        480
+      ],
+      "executeOnce": true,
+      "webhookId": "657d07cc-dda4-4b25-9b34-6af0d03d9fa9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "aCVMMI91ncJTwW3a",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.pdf_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1584,
+        480
+      ],
+      "id": "3e3a3572-23bc-43b4-bd55-5cf27d47e88e",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1I1QZHxUs5NsGaBbEngdswbAfSce8GCbVvj3zWdUWXqc",
+          "mode": "list",
+          "cachedResultName": "Data Dummy Cashflow",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1I1QZHxUs5NsGaBbEngdswbAfSce8GCbVvj3zWdUWXqc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1I1QZHxUs5NsGaBbEngdswbAfSce8GCbVvj3zWdUWXqc/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        336,
+        256
+      ],
+      "id": "58a3146d-bb1c-4749-b7e5-a3147b38f365",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "353DkjOtalLlel4w",
+          "name": "Google Sheets Miftah NF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months",
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        128,
+        256
+      ],
+      "id": "264e4477-3005-47dd-a0d7-15fa25a7bdb6",
+      "name": "Jadwal Bulanan1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Jadwal Bulanan": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Proses & Hitung Statistik Keuangan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Proses & Hitung Statistik Keuangan": {
+      "main": [
+        [
+          {
+            "node": "Analisis CFO - Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisis CFO - Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Format HTML untuk PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Llama 3.3 70B": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analisis CFO - Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format HTML untuk PDF": {
+      "main": [
+        [
+          {
+            "node": "Convert HTML to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert HTML to PDF": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Kirim Email + PDF ke Stakeholder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jadwal Bulanan1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "ec888c29-1bbd-4d27-882c-c68d3857df37",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2e7955425aa6d9fc3490f343f2490ab7f5a242c21d00ca978ef46ad5dfdf3acf"
+  },
+  "id": "9r9i0xGdujTLTNt0",
+  "tags": []
+}
