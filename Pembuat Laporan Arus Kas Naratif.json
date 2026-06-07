@@ -97,7 +97,7 @@
     {
       "parameters": {
         "schemaType": "manual",
-        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"divisi_paling_boros\": {\n      \"type\": \"string\",\n      \"description\": \"Analisis mendalam minimum 3 kalimat tentang divisi paling boros: sebutkan nama divisinya, nominalnya, persentasenya, dan dampak terhadap kesehatan keuangan perusahaan\"\n    },\n    \"pengeluaran_tidak_efisien\": {\n      \"type\": \"string\",\n      \"description\": \"Identifikasi minimum 2-3 pola pengeluaran yang tidak efisien dengan penjelasan konkret mengapa dianggap tidak efisien berdasarkan data\"\n    },\n    \"rekomendasi_1\": {\n      \"type\": \"string\",\n      \"description\": \"Rekomendasi efisiensi pertama yang spesifik, actionable, dan disertai estimasi potensi penghematan jika memungkinkan\"\n    },\n    \"rekomendasi_2\": {\n      \"type\": \"string\",\n      \"description\": \"Rekomendasi efisiensi kedua yang spesifik, actionable, dan disertai estimasi potensi penghematan jika memungkinkan\"\n    },\n    \"rekomendasi_3\": {\n      \"type\": \"string\",\n      \"description\": \"Rekomendasi efisiensi ketiga yang spesifik, actionable, dan disertai estimasi potensi penghematan jika memungkinkan\"\n    },\n    \"risiko_keuangan\": {\n      \"type\": \"string\",\n      \"description\": \"Identifikasi 2-3 risiko keuangan utama yang perlu diwaspadai bulan depan berdasarkan data saat ini\"\n    },\n    \"kesimpulan_eksekutif\": {\n      \"type\": \"string\",\n      \"description\": \"Kesimpulan eksekutif komprehensif minimum 4 kalimat: ringkasan kondisi keuangan, highlight positif, area concern, dan outlook ke depan\"\n    },\n    \"label_skor\": {\n      \"type\": \"string\",\n      \"description\": \"Label untuk skor: Kritis / Perlu Perhatian / Cukup Baik / Baik / Sangat Baik\"\n    }\n  },\n  \"required\": [\n    \"analisis_divisi_paling_boros\",\n    \"pola_pengeluaran_tidak_efisien\",\n    \"rekomendasi_1\",\n    \"rekomendasi_2\",\n    \"rekomendasi_3\",\n    \"risiko_keuangan\",\n    \"kesimpulan_eksekutif\",\n    \"label_skor\"\n  ]\n}",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"divisi_paling_boros\": {\n      \"type\": \"string\",\n      \"description\": \"Analisis mendalam minimum 3 kalimat tentang divisi paling boros: sebutkan nama divisinya, nominalnya, persentasenya, dan dampak terhadap kesehatan keuangan perusahaan\"\n    },\n    \"pengeluaran_tidak_efisien\": {\n      \"type\": \"string\",\n      \"description\": \"Identifikasi minimum 2-3 pola pengeluaran yang tidak efisien dengan penjelasan konkret mengapa dianggap tidak efisien berdasarkan data\"\n    },\n    \"rekomendasi_1\": {\n      \"type\": \"string\",\n      \"description\": \"Rekomendasi efisiensi pertama yang spesifik, actionable, dan disertai estimasi potensi penghematan jika memungkinkan\"\n    },\n    \"rekomendasi_2\": {\n      \"type\": \"string\",\n      \"description\": \"Rekomendasi efisiensi kedua yang spesifik, actionable, dan disertai estimasi potensi penghematan jika memungkinkan\"\n    },\n    \"rekomendasi_3\": {\n      \"type\": \"string\",\n      \"description\": \"Rekomendasi efisiensi ketiga yang spesifik, actionable, dan disertai estimasi potensi penghematan jika memungkinkan\"\n    },\n    \"risiko_keuangan\": {\n      \"type\": \"string\",\n      \"description\": \"Identifikasi 2-3 risiko keuangan utama yang perlu diwaspadai bulan depan berdasarkan data saat ini\"\n    },\n    \"kesimpulan_eksekutif\": {\n      \"type\": \"string\",\n      \"description\": \"Kesimpulan eksekutif komprehensif minimum 4 kalimat: ringkasan kondisi keuangan, highlight positif, area concern, dan outlook ke depan\"\n    },\n    \"label_skor\": {\n      \"type\": \"string\",\n      \"description\": \"Label untuk skor: Kritis / Perlu Perhatian / Cukup Baik / Baik / Sangat Baik\"\n    }\n  },\n  \"required\": [\n    \"divisi_paling_boros\",\n    \"pengeluaran_tidak_efisien\",\n    \"rekomendasi_1\",\n    \"rekomendasi_2\",\n    \"rekomendasi_3\",\n    \"risiko_keuangan\",\n    \"kesimpulan_eksekutif\",\n    \"label_skor\"\n  ]\n}",
         "autoFix": true
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
@@ -376,7 +376,7 @@
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "68b7d386-89c1-4f7f-a4a1-a88b1b0ca3a6",
+  "versionId": "73cd20de-b425-44d4-a63e-ed35734e19ea",
   "meta": {
     "aiBuilderAssisted": true,
     "builderVariant": "mcp",
@@ -386,10 +386,10 @@
   "id": "PrCTmjuA2KbJD1WT",
   "tags": [
     {
-      "updatedAt": "2026-05-22T09:02:51.266Z",
+      "updatedAt": "2026-06-03T08:34:01.264Z",
       "createdAt": "2026-05-22T09:02:51.266Z",
       "id": "0G3LFLyhUkjy2JU7",
-      "name": "FP"
+      "name": "Final Project"
     }
   ]
 }
