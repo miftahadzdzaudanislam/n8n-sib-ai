@@ -68,7 +68,7 @@
       "parameters": {
         "sendTo": "=mift23047ti@student.nurulfikri.ac.id",
         "subject": "=📊 [CFO REPORT] Laporan Arus Kas {{ $('Format Ke Tabel Markdown').item.json.bulan + \" | \" + ($('Format Ke Tabel Markdown').item.json.saldo >= 0 ? \"POSITIF\" : \"NEGATIF\") }}",
-        "message": "=<div style=\"font-family:'Segoe UI',Arial,sans-serif;max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-top:5px solid #1B4F72;border-radius:8px;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);\">\n \n  <!-- BODY -->\n  <div style=\"padding:32px 28px;\">\n \n    <!-- Kop -->\n    <p style=\"margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#64748b;font-weight:600;\">\n      PT Nusantara Maju — Hub Keuangan Eksekutif\n    </p>\n    <h2 style=\"margin:0 0 24px;font-size:22px;font-weight:700;color:#1B4F72;line-height:1.3;\">\n      Analisis Arus Kas Naratif: {{ $('Format Ke Tabel Markdown').item.json.bulan }}\n    </h2>\n \n    <!-- Pembuka -->\n    <p style=\"margin:0 0 20px;font-size:14px;line-height:1.7;color:#334155;\">\n      Yth. Tim Manajemen &amp; Stakeholder,<br><br>\n      <strong>Sistem Analisis CFO</strong> telah menyelesaikan konsolidasi data dan analisis mendalam\n      terkait performa arus kas perusahaan periode <strong>{{ $('Format Ke Tabel Markdown').item.json.bulan }}</strong>.\n      Dokumen resmi berformat <strong>PDF telah dilampirkan</strong> pada email ini.\n    </p>\n \n    <!-- KPI -->\n    <div style=\"background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:4px 0;margin-bottom:20px;\">\n      <table style=\"width:100%;border-collapse:collapse;\">\n        <tr>\n          <td style=\"padding:10px 18px;font-size:13px;color:#64748b;\">Kondisi Cashflow Bulanan:</td>\n          <td style=\"padding:10px 18px;font-size:14px;font-weight:700;text-align:right;color:#16a34a;\">\n            {{ $('Format Ke Tabel Markdown').item.json.saldo >= 0 ? 'POSITIF' : 'NEGATIF' }}\n          </td>\n        </tr>\n        <tr style=\"border-top:1px solid #e2e8f0;\">\n          <td style=\"padding:10px 18px;font-size:13px;color:#64748b;\">Rasio Kas Finalsial:</td>\n          <td style=\"padding:10px 18px;font-size:14px;font-weight:700;text-align:right;color:#1B4F72;\">\n            {{ $('Format Ke Tabel Markdown').item.json.rasioPengeluaran }}%\n          </td>\n        </tr>\n      </table>\n    </div>\n \n    <!-- Temuan utama -->\n    <div style=\"background:#fff7ed;border-left:4px solid #ea580c;border-radius:6px;padding:16px 18px;margin-bottom:24px;\">\n      <p style=\"margin:0 0 6px;font-size:13px;font-weight:700;color:#c2410c;\">⚠️ Temuan Utama Sistem</p>\n      <p style=\"margin:0;font-size:13px;line-height:1.6;color:#c2410c;\">\n        Tingkat efisiensi anggaran terendah periode ini terdeteksi pada divisi\n        <strong>{{ $('Format Ke Tabel Markdown').item.json.divisiPalingBoros }}</strong>\n        dengan kontribusi <strong>{{ $('Format Ke Tabel Markdown').item.json.persenBoros }}%</strong>\n        dari total pengeluaran. Rekomendasi pengetatan operasional tersedia di lampiran PDF.\n      </p>\n    </div>\n \n    <!-- Cakupan analisis -->\n    <p style=\"margin:0 0 10px;font-size:14px;font-weight:600;color:#1B4F72;\">Cakupan Analisis dalam Lampiran PDF:</p>\n    <ul style=\"margin:0 0 28px;padding-left:20px;color:#475569;font-size:13px;line-height:1.9;\">\n      <li><strong>Analisis Divisi Paling Boros</strong> — Identifikasi dan pembedahan penyebab pembengkakan biaya.</li>\n      <li><strong>Distribusi Pengeluaran</strong> — Visualisasi proporsi anggaran per divisi.</li>\n      <li><strong>Pola Pengeluaran Tidak Efisien</strong> — Temuan penyimpangan dan potensi pemborosan.</li>\n      <li><strong>Identifikasi Risiko Arus Kas</strong> — Pemetaan potensi hambatan finansial bulan depan.</li>\n      <li><strong>3 Rekomendasi Efisiensi CFO</strong> — Rencana aksi taktis dengan estimasi potensi penghematan.</li>\n      <li><strong>Kesimpulan Eksekutif</strong> — Ringkasan komprehensif untuk Board of Directors.</li>\n    </ul>\n \n    <!-- Penutup -->\n    <p style=\"margin:0;font-size:13px;line-height:1.8;color:#64748b;\">\n      Salam Profesional,<br>\n      <strong style=\"color:#1B4F72;\">Sistem Analisis CFO</strong><br>\n      <span style=\"font-size:11px;color:#94a3b8;\">\n        Dibuat pada: {{ new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) }}\n      </span>\n    </p>\n \n  </div>\n \n  <!-- FOOTER -->\n  <div style=\"background:#f1f5f9;padding:12px 28px;border-top:1px solid #e2e8f0;text-align:center;\">\n    <p style=\"margin:0;font-size:10px;letter-spacing:0.5px;color:#94a3b8;\">\n      DOKUMEN KONFIDENSIAL — KHUSUS INTERNAL MANAJEMEN PERUSAHAAN\n    </p>\n  </div>\n \n</div>",
+        "message": "=<div style=\"font-family:'Segoe UI',Arial,sans-serif;max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-top:5px solid #1B4F72;border-radius:8px;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);\">\n \n  <!-- BODY -->\n  <div style=\"padding:32px 28px;\">\n \n    <!-- Kop -->\n    <p style=\"margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#64748b;font-weight:600;\">\n      PT Nusantara Maju — Hub Keuangan Eksekutif\n    </p>\n    <h2 style=\"margin:0 0 24px;font-size:22px;font-weight:700;color:#1B4F72;line-height:1.3;\">\n      Analisis Arus Kas Naratif: {{ $('Format Ke Tabel Markdown').item.json.bulan }}\n    </h2>\n \n    <!-- Pembuka -->\n    <p style=\"margin:0 0 20px;font-size:14px;line-height:1.7;color:#334155;\">\n      Yth. Tim Manajemen &amp; Stakeholder,<br><br>\n      <strong>Sistem Analisis CFO</strong> telah menyelesaikan konsolidasi data dan analisis mendalam\n      terkait performa arus kas perusahaan periode <strong>{{ $('Format Ke Tabel Markdown').item.json.bulan }}</strong>.\n      Dokumen resmi berformat <strong>PDF telah dilampirkan</strong> pada email ini.\n    </p>\n \n    <!-- KPI -->\n    <div style=\"background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:4px 0;margin-bottom:20px;\">\n      <table style=\"width:100%;border-collapse:collapse;\">\n        <tr>\n          <td style=\"padding:10px 18px;font-size:13px;color:#64748b;\">Kondisi Cashflow Bulanan:</td>\n          <td style=\"padding:10px 18px;font-size:14px;font-weight:700;text-align:right;color:{{ $('Format Ke Tabel Markdown').item.json.saldo >= 0 ? '#16a34a' : '#dc2626' }};\">\n            {{ $('Format Ke Tabel Markdown').item.json.saldo >= 0 ? 'POSITIF' : 'NEGATIF' }}\n          </td>\n        </tr>\n        <tr style=\"border-top:1px solid #e2e8f0;\">\n          <td style=\"padding:10px 18px;font-size:13px;color:#64748b;\">Rasio Kas Finalsial:</td>\n          <td style=\"padding:10px 18px;font-size:14px;font-weight:700;text-align:right;color:#1B4F72;\">\n            {{ $('Format Ke Tabel Markdown').item.json.rasioPengeluaran }}%\n          </td>\n        </tr>\n      </table>\n    </div>\n \n    <!-- Temuan utama -->\n    <div style=\"background:#fff7ed;border-left:4px solid #ea580c;border-radius:6px;padding:16px 18px;margin-bottom:24px;\">\n      <p style=\"margin:0 0 6px;font-size:13px;font-weight:700;color:#c2410c;\">⚠️ Temuan Utama Sistem</p>\n      <p style=\"margin:0;font-size:13px;line-height:1.6;color:#c2410c;\">\n        Tingkat efisiensi anggaran terendah periode ini terdeteksi pada divisi\n        <strong>{{ $('Format Ke Tabel Markdown').item.json.divisiPalingBoros }}</strong>\n        dengan kontribusi <strong>{{ $('Format Ke Tabel Markdown').item.json.persenBoros }}%</strong>\n        dari total pengeluaran. Rekomendasi pengetatan operasional tersedia di lampiran PDF.\n      </p>\n    </div>\n \n    <!-- Cakupan analisis -->\n    <p style=\"margin:0 0 10px;font-size:14px;font-weight:600;color:#1B4F72;\">Cakupan Analisis dalam Lampiran PDF:</p>\n    <ul style=\"margin:0 0 28px;padding-left:20px;color:#475569;font-size:13px;line-height:1.9;\">\n      <li><strong>Analisis Divisi Paling Boros</strong> — Identifikasi dan pembedahan penyebab pembengkakan biaya.</li>\n      <li><strong>Distribusi Pengeluaran</strong> — Visualisasi proporsi anggaran per divisi.</li>\n      <li><strong>Pola Pengeluaran Tidak Efisien</strong> — Temuan penyimpangan dan potensi pemborosan.</li>\n      <li><strong>Identifikasi Risiko Arus Kas</strong> — Pemetaan potensi hambatan finansial bulan depan.</li>\n      <li><strong>3 Rekomendasi Efisiensi CFO</strong> — Rencana aksi taktis dengan estimasi potensi penghematan.</li>\n      <li><strong>Kesimpulan Eksekutif</strong> — Ringkasan komprehensif untuk Board of Directors.</li>\n    </ul>\n \n    <!-- Penutup -->\n    <p style=\"margin:0;font-size:13px;line-height:1.8;color:#64748b;\">\n      Salam Profesional,<br>\n      <strong style=\"color:#1B4F72;\">Sistem Analisis CFO</strong><br>\n      <span style=\"font-size:11px;color:#94a3b8;\">\n        Dibuat pada: {{ new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) }}\n      </span>\n    </p>\n \n  </div>\n \n  <!-- FOOTER -->\n  <div style=\"background:#f1f5f9;padding:12px 28px;border-top:1px solid #e2e8f0;text-align:center;\">\n    <p style=\"margin:0;font-size:10px;letter-spacing:0.5px;color:#94a3b8;\">\n      DOKUMEN KONFIDENSIAL — KHUSUS INTERNAL MANAJEMEN PERUSAHAAN\n    </p>\n  </div>\n \n</div>",
         "options": {
           "appendAttribution": false,
           "attachmentsUi": {
@@ -186,16 +186,15 @@
       "parameters": {
         "documentId": {
           "__rl": true,
-          "mode": "url",
-          "value": "https://docs.google.com/spreadsheets/d/1I1QZHxUs5NsGaBbEngdswbAfSce8GCbVvj3zWdUWXqc/edit?usp=drivesdk",
-          "__regex": "https:\\/\\/(?:drive|docs)\\.google\\.com(?:\\/.*|)\\/d\\/([0-9a-zA-Z\\-_]+)(?:\\/.*|)"
+          "value": "https://docs.google.com/spreadsheets/d/13A5wzF7JL9K1sfvARHYK8mlFZMcMQFw3hEkWvXR9IEo/edit?usp=sharing",
+          "mode": "url"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1I1QZHxUs5NsGaBbEngdswbAfSce8GCbVvj3zWdUWXqc/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13A5wzF7JL9K1sfvARHYK8mlFZMcMQFw3hEkWvXR9IEo/edit#gid=0"
         },
         "options": {}
       },
@@ -217,14 +216,14 @@
     {
       "parameters": {
         "content": "## Analisis AI CFO (Chief Financial Officer)",
-        "height": 384,
+        "height": 416,
         "width": 640,
         "color": 6
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
         2288,
-        1280
+        1248
       ],
       "typeVersion": 1,
       "id": "52aad56d-4463-4b82-a592-c4d58aa4e6f7",
@@ -233,14 +232,14 @@
     {
       "parameters": {
         "content": "## Pembuatan Laporan PDF",
-        "height": 224,
+        "height": 240,
         "width": 656,
         "color": 6
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
         1872,
-        1728
+        1712
       ],
       "typeVersion": 1,
       "id": "1c55b075-27c7-413a-ad44-47e9770e67eb",
@@ -249,14 +248,14 @@
     {
       "parameters": {
         "content": "## Kirim Email ke Stakeholder",
-        "height": 224,
+        "height": 240,
         "width": 384,
         "color": 6
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
         2544,
-        1728
+        1712
       ],
       "typeVersion": 1,
       "id": "8336c9e7-e895-4ba1-aa0c-819a08fe4712",
@@ -376,13 +375,14 @@
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "73cd20de-b425-44d4-a63e-ed35734e19ea",
+  "versionId": "9f3a619a-a0f8-48f2-ba1a-7a5aaffb03ae",
   "meta": {
     "aiBuilderAssisted": true,
     "builderVariant": "mcp",
     "templateCredsSetupCompleted": true,
     "instanceId": "2e7955425aa6d9fc3490f343f2490ab7f5a242c21d00ca978ef46ad5dfdf3acf"
   },
+  "nodeGroups": [],
   "id": "PrCTmjuA2KbJD1WT",
   "tags": [
     {
